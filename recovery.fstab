@@ -1,0 +1,53 @@
+# Android fstab file.
+# The filesystem that contains the filesystem checker binary (typically /system) cannot
+# specify MF_CHECK, and must come before any filesystems that do specify MF_CHECK
+# /Full backup
+/mmcblk0        emmc      /dev/block/bootdevice/mmcblk0                    flags=display="Full Dump";backup=1;wipeingui;flashimg
+
+# mount_point   fstype    device                                           flags
+/boot           emmc      /dev/block/bootdevice/by-name/boot               flags=display="Boot";backup=1;wipeingui;flashimg
+/recovery       emmc      /dev/block/bootdevice/by-name/recovery           flags=display="Recovery";backup=1;wipeingui;flashimg
+/system         ext4      /dev/block/bootdevice/by-name/system             flags=display="System";backup=1;wipeingui;flashimg
+/system_image   emmc      /dev/block/bootdevice/by-name/system             flags=backup=1;flashimg
+/data           ext4      /dev/block/bootdevice/by-name/userdata           flags=encryptable=footer;backup=1;wipeingui;flashimg
+/vendor         ext4      /dev/block/bootdevice/by-name/cust               flags=display="Cust/Vendor";backup=1;wipeingui;flashimg
+/vendor_image	emmc	  /dev/block/bootdevice/by-name/cust			   flags=display="Cust/Vendor Image";backup=1;wipeingui;flashimg
+/cache          ext4      /dev/block/bootdevice/by-name/cache              flags=display="Cache";backup=1;wipeingui;flashimg
+/splash         emmc      /dev/block/bootdevice/by-name/splash             flags=display="Boot Logo";backup=1;wipeingui;flashimg
+# Modem
+/modem          vfat      /dev/block/bootdevice/by-name/modem              flags=display="Modem";backup=1;wipeingui;flashimg=1;fsflags=ro
+/modem_image    emmc      /dev/block/bootdevice/by-name/modem              flags=display="Modem Image";backup=1;wipeingui;flashimg
+/firmware       emmc      /dev/block/bootdevice/by-name/sec                flags=display="Firmware";backup=1;wipeingui;flashimg
+
+# Modem and communication efs data
+/efs1           emmc      /dev/block/bootdevice/by-name/modemst1           flags=display="EFS";backup=1;wipeingui;flashimg
+/efs2           emmc      /dev/block/bootdevice/by-name/modemst2           flags=subpartitionof=/efs1;backup=1;wipeingui;flashimg
+/efsg           emmc      /dev/block/bootdevice/by-name/fsg                flags=subpartitionof=/efs1;backup=1;wipeingui;flashimg
+/efsc           emmc      /dev/block/bootdevice/by-name/fsc                flags=subpartitionof=/efs1;backup=1;wipeingui;flashimg
+/persist        ext4      /dev/block/bootdevice/by-name/persist            flags=display="Persist";backup=1;wipeingui;flashimg
+
+# /firmware currently appears to not be necessary for decryption
+/firmware       vfat      /dev/block/bootdevice/by-name/modem              flags=display="Firmware";mounttodecrypt;fsflags=ro;backup=1;wipeingui;flashimg
+
+# /misc is disabled for now because of AOSP wipe bug
+/misc           emmc      /dev/block/bootdevice/by-name/misc               flags=display="Misc";backup=1;wipeingui;flashimg
+
+# Bootloader
+/aboot          emmc      /dev/block/bootdevice/by-name/aboot              flags=display="Bootloader";backup=1;wipeingui;flashimg
+/hyp            emmc      /dev/block/bootdevice/by-name/hyp                flags=subpartitionof=/aboot;backup=1;wipeingui;flashimg
+/rpm            emmc      /dev/block/bootdevice/by-name/rpm                flags=subpartitionof=/aboot;backup=1;wipeingui;flashimg
+/sbl1           emmc      /dev/block/bootdevice/by-name/sbl1               flags=subpartitionof=/aboot;backup=1;wipeingui;flashimg
+/tz             emmc      /dev/block/bootdevice/by-name/tz                 flags=subpartitionof=/aboot;backup=1;wipeingui;flashimg
+
+# OEM
+/config         emmc      /dev/block/bootdevice/by-name/config             flags=display="OEM";backup=1;wipeingui;flashimg
+/DDR            emmc      /dev/block/bootdevice/by-name/DDR                flags=subpartitionof=/config;backup=1;wipeingui;flashimg
+/keystore       emmc      /dev/block/bootdevice/by-name/keystore           flags=subpartitionof=/config;backup=1;wipeingui;flashimg
+/oem            emmc      /dev/block/bootdevice/by-name/oem                flags=subpartitionof=/config;backup=1;wipeingui;flashimg
+/sec            emmc      /dev/block/bootdevice/by-name/sec                flags=subpartitionof=/config;backup=1;wipeingui;flashimg
+/ssd            emmc      /dev/block/bootdevice/by-name/ssd                flags=subpartitionof=/config;backup=1;wipeingui;flashimg
+
+# Partition on external removable devices
+/storage        ext4      /data/media/0                  		     	   flags=display="Internal Storage";usermrf;backup=1;fsflags="bind";removable
+/sdcard1        auto      /dev/block/mmcblk1p1                             flags=display="MicroSD";storage;wipeingui;removable
+/usb-otg        auto      /dev/block/sda1                                  flags=display="USB Storage";storage;wipeingui;removable
